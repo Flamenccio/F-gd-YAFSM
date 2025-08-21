@@ -17,37 +17,37 @@ var stack:
 	set = _set_stack,
 	get = _get_stack
 
-var _stack
+var _stack: Array
 
 
 func _init():
 	_stack = []
 
 # Push an item to the top of stack
-func push(to):
+func push(to: Variant) -> void:
 	var from = get_current()
 	_stack.push_back(to)
 	_on_pushed(from, to)
-	emit_signal("pushed", to)
+	pushed.emit(to)
 
 # Remove the current item on top of stack
-func pop():
+func pop() -> void:
 	var to = get_previous()
 	var from = _stack.pop_back()
 	_on_popped(from, to)
-	emit_signal("popped", from)
+	popped.emit(from)
 
 # Called when item pushed
-func _on_pushed(from, to):
+func _on_pushed(from: Variant, to: Variant):
 	pass
 
 # Called when item popped
-func _on_popped(from, to):
+func _on_popped(from: Variant, to: Variant):
 	pass
 
 # Reset stack to given index, -1 to clear all item by default
 # Use ResetEventTrigger to define how _on_popped should be called
-func reset(to=-1, event=ResetEventTrigger.ALL):
+func reset(to=-1, event=ResetEventTrigger.ALL) -> void:
 	assert(to > -2 and to < _stack.size(), "Reset to index out of bounds")
 	var last_index = _stack.size() - 1
 	var first_state = ""
@@ -86,3 +86,4 @@ func get_current():
 
 func get_previous():
 	return _stack[_stack.size() - 2] if _stack.size() > 1 else null
+

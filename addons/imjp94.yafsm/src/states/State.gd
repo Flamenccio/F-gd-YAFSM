@@ -21,19 +21,20 @@ var graph_offset:  # Position in FlowChart stored as meta, for editor only
 func _init(p_name=""):
 	name = p_name
 
-func is_entry():
+func is_entry() -> bool:
 	return name == ENTRY_STATE
 
-func is_exit():
+func is_exit() -> bool:
 	return name == EXIT_STATE
 
-func set_graph_offset(offset):
+func set_graph_offset(offset) -> void:
 	set_meta(META_GRAPH_OFFSET, offset)
 
-func get_graph_offset():
+func get_graph_offset() -> Vector2:
 	return get_meta(META_GRAPH_OFFSET) if has_meta(META_GRAPH_OFFSET) else Vector2.ZERO
 
-func set_name(n):
+func set_name(n) -> void:
 	if name != n:
 		name = n
 		emit_signal("name_changed", name)
+

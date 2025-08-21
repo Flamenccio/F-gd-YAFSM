@@ -8,9 +8,9 @@ const StateInspector = preload("scenes/state_nodes/StateInspector.gd")
 const StackPlayerIcon = preload("assets/icons/stack_player_icon.png")
 const StateMachinePlayerIcon = preload("assets/icons/state_machine_player_icon.png")
 
-var state_machine_editor = StateMachineEditor.instantiate()
-var transition_inspector = TransitionInspector.new()
-var state_inspector = StateInspector.new()
+var state_machine_editor := StateMachineEditor.instantiate()
+var transition_inspector := TransitionInspector.new()
+var state_inspector := StateInspector.new()
 
 var focused_object:  # Can be StateMachine/StateMachinePlayer
 	set = set_focused_object

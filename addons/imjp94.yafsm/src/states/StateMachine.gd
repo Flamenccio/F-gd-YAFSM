@@ -102,7 +102,7 @@ func remove_state(state):
 	return _states.erase(state)
 
 # Change existing state key in states(Dictionary), return true if success
-func change_state_name(from, to):
+func change_state_name(from, to) -> bool:
 	if not (from in _states) or to in _states:
 		return false
 

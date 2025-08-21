@@ -1,12 +1,12 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://dcbeh0ub8dnqe"]
 
-[ext_resource path="res://addons/imjp94.yafsm/src/debugger/StackPlayerDebugger.gd" type="Script" id=1]
+[ext_resource type="Script" uid="uid://dguc1gnc80nb1" path="res://addons/imjp94.yafsm/src/debugger/StackPlayerDebugger.gd" id="1"]
 
 [node name="StackPlayerDebugger" type="Control"]
-modulate = Color( 1, 1, 1, 0.498039 )
+modulate = Color(1, 1, 1, 0.498039)
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource( 1 )
+script = ExtResource("1")
 __meta__ = {
 "_edit_use_anchors_": false
 }
