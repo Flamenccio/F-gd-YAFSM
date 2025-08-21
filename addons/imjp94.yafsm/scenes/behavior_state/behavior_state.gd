@@ -27,9 +27,23 @@ func enter_state() -> void:
 	return
 
 
+## Called once when the state machine enters the associated state.
+## Override this method to implement your own behaviors.[br]
+## - `from`: the last active state
+func enter_state_from(from: String) -> void:
+	return
+
+
 ## Called once when the state machine exits the associated state.
 ## Override this method to implement your own behaviors.
 func exit_state() -> void:
+	return
+
+
+## Called once when the state machine exits the associated state.
+## Override this method to implement your own behaviors.[br]
+## - `to`: the state the machine will enter next
+func exit_state_to(to: String) -> void:
 	return
 
 

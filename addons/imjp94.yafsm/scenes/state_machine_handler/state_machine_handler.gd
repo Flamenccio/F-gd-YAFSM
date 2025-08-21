@@ -10,7 +10,6 @@ extends Node
 @export_group('Create behavior states')
 ## Create blank BehaviorStates to reflect the StateMachinePlayer.
 @export_tool_button('Create BehaviorStates') var _create_behavior_states_button: Callable = _create_behavior_states
-@export var _confirm: bool = false
 @export var _create_mode: CreateStateMode = CreateStateMode.UPDATE
 
 var active_state: BehaviorState = null
@@ -100,8 +99,10 @@ func _on_child_exited_tree(child: Node) -> void:
 	if not Engine.is_editor_hint():
 		return
 	if child == _state_machine_player and _state_machine_player != null:
-		_state_machine_player.transited.disconnect(_on_state_transited)
-		_state_machine_player.updated.disconnect(_on_state_update)
+		if _state_machine_player.transited.is_connected(_on_state_transited):
+			_state_machine_player.transited.disconnect(_on_state_transited)
+		if _state_machine_player.updated.is_connected(_on_state_update):
+			_state_machine_player.updated.disconnect(_on_state_update)
 		_state_machine_player = null
 		print('[StateMachineHandler] lost state machine')
 		_search_for_state_machine_player.call_deferred()
@@ -110,9 +111,6 @@ func _on_child_exited_tree(child: Node) -> void:
 func _create_behavior_states() -> void:
 	if not Engine.is_editor_hint():
 		push_error('[StateMachineHandler] cannot create states while in play mode')
-		return
-	if not _confirm:
-		push_error('[StateMachineHandler] confirm button is false')
 		return
 	if _state_machine_player == null:
 		push_error('[StateMachineHandler] no state machine found')
@@ -325,9 +323,11 @@ func _on_state_transited(old_state: String, new_state: String) -> void:
 
 	if old != null:
 		old.exit_state()
+		old.exit_state_to(new_state)
 		old.state_active = false
 
 	new.enter_state()
+	new.enter_state_from(old_state)
 	new.state_active = true
 	active_state = new
 

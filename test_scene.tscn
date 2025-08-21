@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://cvciytrljfgy2"]
+[gd_scene load_steps=30 format=3 uid="uid://cvciytrljfgy2"]
 
 [ext_resource type="Script" uid="uid://bn1ivxhedsqfp" path="res://addons/imjp94.yafsm/scenes/state_machine_handler/state_machine_handler.gd" id="1_uhqqe"]
 [ext_resource type="Script" uid="uid://bubhv415uy3si" path="res://addons/imjp94.yafsm/src/StateMachinePlayer.gd" id="2_sasra"]
@@ -59,15 +59,99 @@ transitions = {
 name = "StateA"
 metadata/graph_offset = Vector2(391.5, 161)
 
-[sub_resource type="Resource" id="Resource_cqn77"]
-script = ExtResource("4_2nij2")
-name = "StateB"
-metadata/graph_offset = Vector2(531.5, 241)
-
 [sub_resource type="Resource" id="Resource_7cbxl"]
 script = ExtResource("4_2nij2")
 name = "StateK"
 metadata/graph_offset = Vector2(704.5, 128.5)
+
+[sub_resource type="Resource" id="Resource_njel3"]
+script = ExtResource("4_2nij2")
+name = "Entry"
+metadata/graph_offset = Vector2(191.5, 161)
+
+[sub_resource type="Resource" id="Resource_rpuu0"]
+script = ExtResource("4_2nij2")
+name = "Exit"
+metadata/graph_offset = Vector2(591.5, 161)
+
+[sub_resource type="Resource" id="Resource_vr1i5"]
+script = ExtResource("4_2nij2")
+name = "Entry"
+metadata/graph_offset = Vector2(191.5, 161)
+
+[sub_resource type="Resource" id="Resource_0k8yu"]
+script = ExtResource("4_2nij2")
+name = "Exit"
+metadata/graph_offset = Vector2(591.5, 161)
+
+[sub_resource type="Resource" id="Resource_k6its"]
+script = ExtResource("4_2nij2")
+name = "StateT"
+metadata/graph_offset = Vector2(391.5, 161)
+
+[sub_resource type="Resource" id="Resource_cqn77"]
+script = ExtResource("5_7cbxl")
+from = "Entry"
+to = "StateT"
+conditions = {}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_p7tmn"]
+script = ExtResource("5_7cbxl")
+from = "StateT"
+to = "Exit"
+conditions = {}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_b11sm"]
+script = ExtResource("3_coq8p")
+states = {
+"Entry": SubResource("Resource_vr1i5"),
+"Exit": SubResource("Resource_0k8yu"),
+"StateT": SubResource("Resource_k6its")
+}
+transitions = {
+"Entry": {
+"StateT": SubResource("Resource_cqn77")
+},
+"StateT": {
+"Exit": SubResource("Resource_p7tmn")
+}
+}
+name = "StateU"
+metadata/graph_offset = Vector2(391.5, 161)
+
+[sub_resource type="Resource" id="Resource_oo8pe"]
+script = ExtResource("5_7cbxl")
+from = "Entry"
+to = "StateU"
+conditions = {}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_4gito"]
+script = ExtResource("5_7cbxl")
+from = "StateU"
+to = "Exit"
+conditions = {}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_fbuy2"]
+script = ExtResource("3_coq8p")
+states = {
+"Entry": SubResource("Resource_njel3"),
+"Exit": SubResource("Resource_rpuu0"),
+"StateU": SubResource("Resource_b11sm")
+}
+transitions = {
+"Entry": {
+"StateU": SubResource("Resource_oo8pe")
+},
+"StateU": {
+"Exit": SubResource("Resource_4gito")
+}
+}
+name = "StateB"
+metadata/graph_offset = Vector2(631.5, 261)
 
 [sub_resource type="Resource" id="Resource_hiucn"]
 script = ExtResource("5_7cbxl")
@@ -95,7 +179,7 @@ script = ExtResource("3_coq8p")
 states = {
 "Entry": SubResource("Resource_8pr8v"),
 "StateA": SubResource("Resource_6m80x"),
-"StateB": SubResource("Resource_cqn77"),
+"StateB": SubResource("Resource_fbuy2"),
 "StateK": SubResource("Resource_7cbxl")
 }
 transitions = {
@@ -114,7 +198,6 @@ name = ""
 [node name="StateMachineHandler" type="Node" parent="." node_paths=PackedStringArray("_state_machine_player")]
 script = ExtResource("1_uhqqe")
 _state_machine_player = NodePath("StateMachinePlayer")
-_confirm = true
 metadata/_custom_type_script = "uid://bn1ivxhedsqfp"
 
 [node name="StateMachinePlayer" type="Node" parent="StateMachineHandler"]
@@ -123,9 +206,6 @@ state_machine = SubResource("Resource_2nij2")
 metadata/_custom_type_script = "uid://bubhv415uy3si"
 
 [node name="Entry" type="Node" parent="StateMachineHandler"]
-script = ExtResource("6_7cbxl")
-
-[node name="StateK" type="Node" parent="StateMachineHandler"]
 script = ExtResource("6_7cbxl")
 
 [node name="StateA" type="Node" parent="StateMachineHandler"]
@@ -140,5 +220,26 @@ script = ExtResource("6_7cbxl")
 [node name="Exit" type="Node" parent="StateMachineHandler/StateA"]
 script = ExtResource("6_7cbxl")
 
+[node name="StateK" type="Node" parent="StateMachineHandler"]
+script = ExtResource("6_7cbxl")
+
 [node name="StateB" type="Node" parent="StateMachineHandler"]
+metadata/super_state = true
+
+[node name="Entry" type="Node" parent="StateMachineHandler/StateB"]
+script = ExtResource("6_7cbxl")
+
+[node name="Exit" type="Node" parent="StateMachineHandler/StateB"]
+script = ExtResource("6_7cbxl")
+
+[node name="StateU" type="Node" parent="StateMachineHandler/StateB"]
+metadata/super_state = true
+
+[node name="Entry" type="Node" parent="StateMachineHandler/StateB/StateU"]
+script = ExtResource("6_7cbxl")
+
+[node name="Exit" type="Node" parent="StateMachineHandler/StateB/StateU"]
+script = ExtResource("6_7cbxl")
+
+[node name="StateT" type="Node" parent="StateMachineHandler/StateB/StateU"]
 script = ExtResource("6_7cbxl")
