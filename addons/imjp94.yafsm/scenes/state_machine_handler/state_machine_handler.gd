@@ -13,6 +13,9 @@ extends Node
 @export var _confirm: bool = false
 @export var _create_mode: CreateStateMode = CreateStateMode.UPDATE
 
+var active_state: BehaviorState = null
+var _behavior_states: Dictionary
+
 const ARCHIVE_NODE_NAME = '_Archive'
 const SUPER_STATE_META = 'super_state'
 
@@ -20,8 +23,8 @@ enum CreateStateMode {
 	## Moves all old behavior states to under an 'Old' node
 	## and recreates the StateMachine with blank BehaviorStates.
 	ARCHIVE,
-	## Keeps all old nodes untouched. Creates new BehaviorStates for new states
-	## and removes BehaviorStates that associate to a deleted state.
+	## Keeps all untouched nodes. Creates new BehaviorStates for new states
+	## and removes existing BehaviorStates that associate to a deleted state.
 	UPDATE,
 	## Destroys all nodes and replaces them with new ones.
 	REPLACE
@@ -30,7 +33,33 @@ enum CreateStateMode {
 func _ready() -> void:
 	if not Engine.is_editor_hint():
 		if _state_machine_player == null:
-			push_error('StateMachineHandler: _state_machine_player is null!')
+			push_error('[StateMachineHandler] _state_machine_player is null!')
+
+		_behavior_states.clear()
+
+		# Load states and supply callables
+		for child in _get_children_recursive(self):
+			if child is BehaviorState:
+				var behavior = child as BehaviorState
+				_behavior_states['{0}'.format({'0': get_path_to(child)})] = behavior
+				behavior.set_state_machine_param = _state_machine_player.set_param
+				behavior.get_state_machine_param = _state_machine_player.get_param
+
+		# Check if all states are accounted for
+		var states = _get_state_paths(_state_machine_player.state_machine)
+
+		for state_path in states:
+			if not _behavior_states.keys().has(state_path):
+				push_error('[StateMachineHandler] does not have state "{0}"'.format({'0': state_path}))
+
+		if _behavior_states.keys().size() > states:
+			push_warning('[StateMachineHandler] has behavior states that do not correlate to any state machine state!')
+
+		# Check if signals are connected
+		if not _state_machine_player.transited.is_connected(_on_state_transited):
+			_state_machine_player.transited.connect(_on_state_transited)
+		if not _state_machine_player.updated.is_connected(_on_state_update):
+			_state_machine_player.updated.connect(_on_state_update)
 
 
 func _enter_tree() -> void:
@@ -50,6 +79,10 @@ func _search_for_state_machine_player() -> void:
 		if index < 0:
 			return
 		_state_machine_player = children[index] as StateMachinePlayer
+		print('[StateMachineHandler] using state machine ', _state_machine_player)
+		# Connect to signals
+		_state_machine_player.transited.connect(_on_state_transited)
+		_state_machine_player.updated.connect(_on_state_update)
 
 
 func _on_child_entered_tree(child: Node) -> void:
@@ -58,12 +91,17 @@ func _on_child_entered_tree(child: Node) -> void:
 	if child is StateMachinePlayer and _state_machine_player == null:
 		_state_machine_player = child as StateMachinePlayer
 		print('[StateMachineHandler] using state machine ', _state_machine_player)
+		# Connect to signals
+		_state_machine_player.transited.connect(_on_state_transited)
+		_state_machine_player.updated.connect(_on_state_update)
 
 
 func _on_child_exited_tree(child: Node) -> void:
 	if not Engine.is_editor_hint():
 		return
 	if child == _state_machine_player and _state_machine_player != null:
+		_state_machine_player.transited.disconnect(_on_state_transited)
+		_state_machine_player.updated.disconnect(_on_state_update)
 		_state_machine_player = null
 		print('[StateMachineHandler] lost state machine')
 		_search_for_state_machine_player.call_deferred()
@@ -179,7 +217,7 @@ func _create_behavior_states_replace() -> void:
 		return
 	var children = get_children()
 	for child in children:
-		if child is not StateMachinePlayer:
+		if child.has_meta(SUPER_STATE_META) or child is BehaviorState:
 			print('[StateMachineHandler] removed child ', child.name)
 			child.free()
 	_reconstruct_state_machine()
@@ -275,3 +313,29 @@ func _get_children_recursive(target: Node) -> Array[Node]:
 		result.append_array(_get_children_recursive(child))
 	result.append_array(children)
 	return result
+
+
+func _on_state_transited(old_state: String, new_state: String) -> void:
+
+	if Engine.is_editor_hint():
+		return
+
+	var old = _behavior_states[old_state]
+	var new = _behavior_states[new_state]
+
+	if old != null:
+		old.exit_state()
+		old.state_active = false
+
+	new.enter_state()
+	new.state_active = true
+	active_state = new
+
+
+func _on_state_update(_s: String, delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+	if active_state == null:
+		return
+	active_state.update_state(delta)
+

@@ -35,7 +35,7 @@ func exit_state() -> void:
 
 ## Called repeatedly, depending on the update method set in the `StateMachinePlayer`.
 ## Override this method to implement your own behaviors.
-func update_state() -> void:
+func update_state(delta: float) -> void:
 	return
 
 
