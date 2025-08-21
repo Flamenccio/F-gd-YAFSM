@@ -12,6 +12,9 @@ extends Node
 @export_tool_button('Create BehaviorStates') var _create_behavior_states_button: Callable = _create_behavior_states
 @export var _create_mode: CreateStateMode = CreateStateMode.UPDATE
 
+## Enable this if don't want this state machine handler pushing status messages
+@export var _silent: bool
+
 var active_state: BehaviorState = null
 var _behavior_states: Dictionary
 
@@ -78,7 +81,7 @@ func _search_for_state_machine_player() -> void:
 		if index < 0:
 			return
 		_state_machine_player = children[index] as StateMachinePlayer
-		print('[StateMachineHandler] using state machine ', _state_machine_player)
+		_push_status_message('[StateMachineHandler] using state machine {0}'.format({'0': _state_machine_player}))
 		# Connect to signals
 		_state_machine_player.transited.connect(_on_state_transited)
 		_state_machine_player.updated.connect(_on_state_update)
@@ -89,7 +92,7 @@ func _on_child_entered_tree(child: Node) -> void:
 		return
 	if child is StateMachinePlayer and _state_machine_player == null:
 		_state_machine_player = child as StateMachinePlayer
-		print('[StateMachineHandler] using state machine ', _state_machine_player)
+		_push_status_message('[StateMachineHandler] using state machine {0}'.format({'0': _state_machine_player}))
 		# Connect to signals
 		_state_machine_player.transited.connect(_on_state_transited)
 		_state_machine_player.updated.connect(_on_state_update)
@@ -104,7 +107,7 @@ func _on_child_exited_tree(child: Node) -> void:
 		if _state_machine_player.updated.is_connected(_on_state_update):
 			_state_machine_player.updated.disconnect(_on_state_update)
 		_state_machine_player = null
-		print('[StateMachineHandler] lost state machine')
+		_push_status_message('[StateMachineHandler] lost state machine')
 		_search_for_state_machine_player.call_deferred()
 
 
@@ -154,7 +157,7 @@ func _create_behavior_states_archive() -> void:
 
 	_set_owner_recursive(get_tree().edited_scene_root, new_archive)
 	_reconstruct_state_machine()
-	print('[StateMachineHandler] done')
+	_push_status_message('[StateMachineHandler] done')
 
 
 func _create_behavior_states_update() -> void:
@@ -177,7 +180,7 @@ func _create_behavior_states_update() -> void:
 	_remove_deleted_states(node_paths, state_paths)
 	_reconstruct_state_machine()
 	_update_changed_states()
-	print('[StateMachineHandler] done')
+	_push_status_message('[StateMachineHandler] done')
 
 
 func _remove_deleted_states(node_paths: Array[String], state_paths: Array[String]) -> void:
@@ -188,7 +191,7 @@ func _remove_deleted_states(node_paths: Array[String], state_paths: Array[String
 		deleted.erase(state)
 	
 	for deleted_state in deleted:
-		print('[StateMachineHandler] removed child ', deleted_state)
+		_push_status_message('[StateMachineHandler] removed child {0}'.format({'0': deleted_state}))
 		get_node(deleted_state).free()
 
 
@@ -201,13 +204,13 @@ func _update_changed_states() -> void:
 			super_state.name = child.name
 			super_state.set_meta(SUPER_STATE_META, true)
 			child.replace_by(super_state)
-			print('[StateMachineHandler] converted behavior state {0} into super state'.format({'0': super_state.name}))
+			_push_status_message('[StateMachineHandler] converted behavior state {0} into super state'.format({'0': super_state.name}))
 		# Make super state into behavior state
 		elif child.get_children().size() == 0 and child.has_meta(SUPER_STATE_META):
 			var behavior_state = BehaviorState.new()
 			behavior_state.name = child.name
 			child.replace_by(behavior_state)
-			print('[StateMachineHandler] converted super state {0} into behavior state'.format({'0': behavior_state.name}))
+			_push_status_message('[StateMachineHandler] converted super state {0} into behavior state'.format({'0': behavior_state.name}))
 
 
 func _create_behavior_states_replace() -> void:
@@ -216,10 +219,10 @@ func _create_behavior_states_replace() -> void:
 	var children = get_children()
 	for child in children:
 		if child.has_meta(SUPER_STATE_META) or child is BehaviorState:
-			print('[StateMachineHandler] removed child ', child.name)
+			_push_status_message('[StateMachineHandler] removed child {0}'.format({'0': child.name}))
 			child.free()
 	_reconstruct_state_machine()
-	print('[StateMachineHandler] done')
+	_push_status_message('[StateMachineHandler] done')
 
 
 # Reads the associated state machine states and creates a tree
@@ -282,14 +285,14 @@ func _create_state_behavior(state_name: String) -> void:
 			continue
 
 		if current_node_name == end_state:
-			print('[StateMachineHandler] create behavior state "{0}"'.format({'0': current_path}))
+			_push_status_message('[StateMachineHandler] create behavior state "{0}"'.format({'0': current_path}))
 			var state = BehaviorState.new()
 			state.name = end_state
 			last_node.add_child(state)
 			state.owner = root
 			return
 		else:
-			print('[StateMachineHandler] create super state "{0}"'.format({'0': current_path}))
+			_push_status_message('[StateMachineHandler] create super state "{0}"'.format({'0': current_path}))
 			var new_node = Node.new()
 			new_node.name = current_node_name
 			new_node.set_meta(SUPER_STATE_META, true)
@@ -338,4 +341,10 @@ func _on_state_update(_s: String, delta: float) -> void:
 	if active_state == null:
 		return
 	active_state.update_state(delta)
+
+
+func _push_status_message(message: String) -> void:
+	if _silent:
+		return
+	print(message)
 
