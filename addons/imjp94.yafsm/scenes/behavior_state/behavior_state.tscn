@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://bur8ao61bfl88"]
+[gd_scene load_steps=2 format=3 uid="uid://bur8ao61bfl88"]
+
+[ext_resource type="Script" uid="uid://bc7lmcj22fca" path="res://addons/imjp94.yafsm/scenes/behavior_state/behavior_state.gd" id="1_4o8w4"]
 
 [node name="BehaviorState" type="Node"]
+script = ExtResource("1_4o8w4")
