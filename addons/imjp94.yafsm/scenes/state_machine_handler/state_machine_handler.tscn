@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvkrxsr0wwnmi"]
+
+[ext_resource type="Script" uid="uid://bn1ivxhedsqfp" path="res://addons/imjp94.yafsm/scenes/state_machine_handler/state_machine_handler.gd" id="1_n0mqk"]
+
+[node name="StateMachineHandler" type="Node"]
+script = ExtResource("1_n0mqk")

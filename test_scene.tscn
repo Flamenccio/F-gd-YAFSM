@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cvciytrljfgy2"]
+
+[ext_resource type="Script" uid="uid://bn1ivxhedsqfp" path="res://addons/imjp94.yafsm/scenes/state_machine_handler/state_machine_handler.gd" id="1_uhqqe"]
+
+[node name="TestScene" type="Node2D"]
+
+[node name="StateMachineHandler" type="Node" parent="."]
+script = ExtResource("1_uhqqe")
+metadata/_custom_type_script = "uid://bn1ivxhedsqfp"
