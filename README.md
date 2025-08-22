@@ -1,3 +1,88 @@
+# F-gd-YAFSM (Flamenccio godot-Yet Another Finite State Machine)
+
+A finite state machine forked from imjp94's YAFSM, adding support for node-based finite state machines.
+
+I made this mostly because I liked the flowchart editor of the original, but wanted to use a flexible node-based approach.
+
+As a result, I made a weird hybrid system that allows you to use the flowchart editor and translate the states into nodes. The state-nodes (`BehaviorStates`) methods are called automatically, depending on the state of the state machine.
+
+## Before using
+
+- If you have a large, complex state machine, you will end up generating a lot of nodes.
+- Finite state machines have their limitations!
+- Unlike a single-file approach, a node-based approach may be a little harder to revert, if you end up disliking it.
+- Like the original, this only supports **Godot 4.x**.
+
+## How to use
+
+1. Add a `StateMachineHandler` via `Add Node > StateMachineHandler`. A default `StateMachinePlayer` will be created as its child.
+
+> Feel free to delete the child and replace the exported `StateMachinePlayer`.
+
+2. Make your state machine as normal (see [Getting Started](#getting-started) and [Editor](#editor)).
+3. When you're done, click the `Create BehaviorStates` button in the `StateMachineHandler`'s inspector. `BehaviorState` nodes will be generated from your state machine.
+4. To customize the behavior of a `BehaviorState` node, simply extend from its script and override methods (see below).
+
+## `BehaviorState` override methods
+
+Override these methods in a `BehaviorState` script to customize it.
+
+```gdscript
+## Called once when the machine enters the associated state.
+func enter_state() -> void
+```
+
+```gdscript
+## Called once when the machine enters the associated state from state `from`.
+func enter_state_from(from: String) -> void
+```
+
+```gdscript
+## Called once when the machine exits the associated state.
+func exit_state() -> void
+```
+
+```gdscript
+## Called once when the machine exits the associated stat to new state `to`.
+func exit_state_to(to: String) -> void:
+```
+
+```gdscript
+## Called repeatedly, depending on the StateMachinePlayer's Update Process Mode.
+## `delta` is the time in seconds between each call.
+func update_state(delta: float) -> void:
+```
+
+## Other useful `BehaviorState` methods
+
+Don't override these, though!
+
+```gdscript
+## Sets the state machine parameter `param` to value `value`.
+func set_param(param: String, value: Variant) -> void
+```
+
+```gdscript
+## Returns the value of state machine paramter `param`.
+func get_param(param: String) -> Variant
+```
+
+## `StateMachineHandler` create modes
+
+When generating nodes from your state machine, the default create mode is set to `Update`.
+- **`Update`**: leaves untouched nodes as-is. Creates new `BehaviorStates` from new states and deletes existing `BehaviorStates` from deleted states.
+- **`Archive`**: takes all existing nodes and places them under an `_Archive` node, then regenerates the state machine.
+
+> If there are existing archives, the new archive's name will have a number at the end; the old archive is preserved.
+
+- **`Replace`**: **DESTRUCTIVE**. Deletes all existing nodes and regenerates the state machine.
+
+## That's it!
+
+Other than those additions, the addon works pretty much the same (except for installation).
+
+---
+
 # ![gd-YAFSM icon](icon.png)gd-YAFSM (**g**o**d**ot-**Y**et **A**nother **F**inite **S**tate **M**achine)
 
 Designer-friendly Finite State Machine implemented in "Godotic" way
