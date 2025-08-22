@@ -24,6 +24,8 @@ func _enter_tree():
 	var editor_base_control = get_editor_interface().get_base_control()
 	add_custom_type("StackPlayer", "Node", StackPlayer, StackPlayerIcon)
 	add_custom_type("StateMachinePlayer", "Node", StateMachinePlayer, StateMachinePlayerIcon)
+	add_custom_type("StateMachineHandler", "Node", StateMachineHandler, StateMachinePlayerIcon)
+	add_custom_type("BehaviorState", "Node", BehaviorState, StateMachinePlayerIcon)
 	
 	state_machine_editor.undo_redo = get_undo_redo()
 	state_machine_editor.selection_stylebox.bg_color = editor_base_control.get_theme_color("box_selection_fill_color", "Editor")
@@ -53,6 +55,8 @@ func _enter_tree():
 func _exit_tree():
 	remove_custom_type("StackPlayer")
 	remove_custom_type("StateMachinePlayer")
+	remove_custom_type("StateMachineHandler")
+	remove_custom_type("BehaviorState")
 
 	remove_inspector_plugin(transition_inspector)
 	remove_inspector_plugin(state_inspector)

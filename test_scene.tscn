@@ -17,15 +17,15 @@ script = ExtResource("4_2nij2")
 name = "Entry"
 metadata/graph_offset = Vector2(191.5, 161)
 
-[sub_resource type="Resource" id="Resource_ykxp3"]
-script = ExtResource("4_2nij2")
-name = "StateR"
-metadata/graph_offset = Vector2(391.5, 161)
-
 [sub_resource type="Resource" id="Resource_g6y4b"]
 script = ExtResource("4_2nij2")
 name = "Exit"
 metadata/graph_offset = Vector2(591.5, 161)
+
+[sub_resource type="Resource" id="Resource_ykxp3"]
+script = ExtResource("4_2nij2")
+name = "StateR"
+metadata/graph_offset = Vector2(391.5, 161)
 
 [sub_resource type="Resource" id="Resource_pvxhv"]
 script = ExtResource("5_7cbxl")
@@ -58,11 +58,6 @@ transitions = {
 }
 name = "StateA"
 metadata/graph_offset = Vector2(391.5, 161)
-
-[sub_resource type="Resource" id="Resource_7cbxl"]
-script = ExtResource("4_2nij2")
-name = "StateK"
-metadata/graph_offset = Vector2(704.5, 128.5)
 
 [sub_resource type="Resource" id="Resource_njel3"]
 script = ExtResource("4_2nij2")
@@ -153,6 +148,11 @@ transitions = {
 name = "StateB"
 metadata/graph_offset = Vector2(631.5, 261)
 
+[sub_resource type="Resource" id="Resource_7cbxl"]
+script = ExtResource("4_2nij2")
+name = "StateK"
+metadata/graph_offset = Vector2(704.5, 128.5)
+
 [sub_resource type="Resource" id="Resource_hiucn"]
 script = ExtResource("5_7cbxl")
 from = "Entry"
@@ -160,17 +160,17 @@ to = "StateA"
 conditions = {}
 priority = 0
 
-[sub_resource type="Resource" id="Resource_2dw41"]
-script = ExtResource("5_7cbxl")
-from = "StateA"
-to = "StateK"
-conditions = {}
-priority = 0
-
 [sub_resource type="Resource" id="Resource_22oil"]
 script = ExtResource("5_7cbxl")
 from = "StateA"
 to = "StateB"
+conditions = {}
+priority = 0
+
+[sub_resource type="Resource" id="Resource_2dw41"]
+script = ExtResource("5_7cbxl")
+from = "StateA"
+to = "StateK"
 conditions = {}
 priority = 0
 

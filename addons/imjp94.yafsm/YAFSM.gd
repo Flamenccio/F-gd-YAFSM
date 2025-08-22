@@ -18,3 +18,7 @@ const BooleanCondition = preload("src/conditions/BooleanCondition.gd")
 const IntegerCondition = preload("src/conditions/IntegerCondition.gd")
 const FloatCondition = preload("src/conditions/FloatCondition.gd")
 const StringCondition = preload("src/conditions/StringCondition.gd")
+
+# F-gd-YAFSM
+const StateMachineHandler = preload("scenes/state_machine_handler/state_machine_handler.gd")
+const BehaviorState = preload("scenes/behavior_state/behavior_state.gd")
