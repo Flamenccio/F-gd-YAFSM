@@ -72,6 +72,13 @@ func _enter_tree() -> void:
 		if not child_exiting_tree.is_connected(_on_child_exited_tree):
 			child_exiting_tree.connect(_on_child_exited_tree)
 
+		# Create default SMP
+		var default_smp = StateMachinePlayer.new()
+		default_smp.name = "StateMachinePlayer"
+		add_child(default_smp)
+		default_smp.owner = get_tree().edited_scene_root
+		_search_for_state_machine_player.call_deferred()
+
 
 func _search_for_state_machine_player() -> void:
 	if Engine.is_editor_hint() and _state_machine_player == null:
