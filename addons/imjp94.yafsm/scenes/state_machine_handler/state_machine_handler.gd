@@ -13,7 +13,7 @@ extends Node
 @export var _create_mode: CreateStateMode = CreateStateMode.UPDATE
 
 ## Enable this if don't want this state machine handler pushing status messages
-@export var _silent: bool
+@export var _silent: bool = true
 
 var active_state: BehaviorState = null
 var _behavior_states: Dictionary
@@ -71,13 +71,20 @@ func _enter_tree() -> void:
 			child_entered_tree.connect(_on_child_entered_tree)
 		if not child_exiting_tree.is_connected(_on_child_exited_tree):
 			child_exiting_tree.connect(_on_child_exited_tree)
+		_create_default_player.call_deferred()
 
-		# Create default SMP
-		var default_smp = StateMachinePlayer.new()
-		default_smp.name = "StateMachinePlayer"
-		add_child(default_smp)
-		default_smp.owner = get_tree().edited_scene_root
-		_search_for_state_machine_player.call_deferred()
+
+func _create_default_player() -> void:
+
+	# Create default SMP, if there is no SMP yet
+	if _state_machine_player != null:
+		return
+
+	var default_smp = StateMachinePlayer.new()
+	default_smp.name = "StateMachinePlayer"
+	add_child(default_smp)
+	default_smp.owner = get_tree().edited_scene_root
+	_search_for_state_machine_player.call_deferred()
 
 
 func _search_for_state_machine_player() -> void:
