@@ -54,7 +54,7 @@ func _ready() -> void:
 			if not _behavior_states.keys().has(state_path):
 				push_error('[StateMachineHandler] does not have state "{0}"'.format({'0': state_path}))
 
-		if _behavior_states.keys().size() > states:
+		if _behavior_states.keys().size() > states.size():
 			push_warning('[StateMachineHandler] has behavior states that do not correlate to any state machine state!')
 
 		# Check if signals are connected
