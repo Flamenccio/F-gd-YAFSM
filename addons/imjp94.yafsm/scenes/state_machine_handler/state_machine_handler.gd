@@ -33,7 +33,9 @@ enum CreateStateMode {
 }
 
 func _ready() -> void:
+
 	if not Engine.is_editor_hint():
+
 		if _state_machine_player == null:
 			push_error('[StateMachineHandler] _state_machine_player is null!')
 
@@ -80,10 +82,17 @@ func _create_default_player() -> void:
 	if _state_machine_player != null:
 		return
 
+	var scene_tree = get_tree()
+
+	# Don't do anything if the node hasn't been added to
+	# the tree yet.
+	if scene_tree == null:
+		return
+
 	var default_smp = StateMachinePlayer.new()
 	default_smp.name = "StateMachinePlayer"
 	add_child(default_smp)
-	default_smp.owner = get_tree().edited_scene_root
+	default_smp.owner = scene_tree.edited_scene_root
 	_search_for_state_machine_player.call_deferred()
 
 
@@ -149,13 +158,20 @@ func _create_behavior_states_archive() -> void:
 	if not Engine.is_editor_hint():
 		return
 
+	var scene_tree = get_tree()
+
+	if scene_tree == null:
+		return
+
 	var children = get_children()
 
 	# Count other _Archive nodes
 	var count = 0
+
 	for child in children:
 		if child.name.contains(ARCHIVE_NODE_NAME):
 			count += 1
+
 	var archive_name = '{0}{1}'.format({'0': ARCHIVE_NODE_NAME, '1': count})
 
 	# Add new archive & move states
@@ -169,7 +185,7 @@ func _create_behavior_states_archive() -> void:
 			continue
 		child.reparent(new_archive)
 
-	_set_owner_recursive(get_tree().edited_scene_root, new_archive)
+	_set_owner_recursive(scene_tree.edited_scene_root, new_archive)
 	_reconstruct_state_machine()
 	_push_status_message('[StateMachineHandler] done')
 
@@ -277,10 +293,15 @@ func _get_state_paths(state_machine: StateMachine) -> Array[String]:
 
 func _create_state_behavior(state_name: String) -> void:
 
+	var scene_tree = get_tree()
+
+	if scene_tree == null:
+		return
+
 	var split = state_name.split('/')
 	var end_state = split[split.size() - 1]
 	var current_path = ''
-	var root = get_tree().edited_scene_root
+	var root = scene_tree.edited_scene_root
 	var last_node: Node = self
 
 	for i in range(split.size()):
